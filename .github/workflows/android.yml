@@ -12,15 +12,38 @@ jobs:
       - name: Depoyu İndir
         uses: actions/checkout@v4
 
-      - name: Buildozer ile APK Derle
-        id: buildozer
-        uses: ArtemSBulgakov/buildozer-action@v1
+      - name: Python 3.10 Kur
+        uses: actions/setup-python@v5
         with:
-          command: buildozer android debug
-          buildozer_version: develop
+          python-version: '3.10'
+
+      - name: Sistem Bağımlılıklarını ve Java 17 Kur
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            git zip unzip openjdk-17-jdk \
+            autoconf libtool pkg-config zlib1g-dev \
+            libncurses5-dev libncursesw5-dev libtinfo5 \
+            cmake libffi-dev libssl-dev automake \
+            ccache
+
+      - name: Buildozer ve Cython Kur
+        run: |
+          pip install --upgrade pip setuptools wheel
+          pip install cython==0.29.36 buildozer
+
+      - name: Buildozer Önbelleğini Kullan (Hızlandırma)
+        uses: actions/cache@v4
+        with:
+          path: .buildozer
+          key: buildozer-${{ runner.os }}-${{ hashFiles('buildozer.spec') }}
+
+      - name: APK Derle
+        run: |
+          yes | buildozer android debug
 
       - name: APK Dosyasını Yükle
         uses: actions/upload-artifact@v4
         with:
           name: musteri-takip-apk
-          path: ${{ steps.buildozer.outputs.filename }}
+          path: bin/*.apk
