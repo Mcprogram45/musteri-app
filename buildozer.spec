@@ -35,6 +35,9 @@ android.accept_sdk_license = True
 
 # (int) Android minimum SDK version (Android 5.0+)
 android.minapi = 21
+android.api = 33
+android.ndk = 25b
+
 
 [buildozer]
 
