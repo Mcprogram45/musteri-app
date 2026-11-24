@@ -40,7 +40,12 @@ jobs:
 
       - name: APK Derle
         run: |
-         yes | buildozer android debug > build.log 2>&1 || (tail -n 100 build.log && exit 1)
+          buildozer android debug > build.log 2>&1 || {
+            echo "=== DERLEME HATASI DETAYI ==="
+            grep -B 15 -A 5 "Command failed:" build.log || tail -n 60 build.log
+            exit 1
+          }
+
 
 
       - name: APK Dosyasını Yükle
