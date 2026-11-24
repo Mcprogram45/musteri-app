@@ -1,7 +1,7 @@
 [app]
 
 # (str) Title of your application
-title = Müşteri Takip
+title = Musteri Takip
 
 # (str) Package name
 package.name = musteritakip
@@ -13,13 +13,13 @@ package.domain = org.musteritakip
 source.dir = .
 
 # (list) Source files to include (let empty to include all the files)
-source.include_exts = py,png,jpg,kv,atlas
+source.include_exts = py,png,jpg,kv,atlas,db
 
 # (str) Application versioning
 version = 1.0
 
 # (list) Application requirements
-requirements = python3,kivy
+requirements = python3,kivy,sqlite3
 
 # (str) Supported orientation
 orientation = portrait
@@ -28,7 +28,7 @@ orientation = portrait
 fullscreen = 0
 
 # (list) Android architectures to build for
-android.archs = arm64-v8a, armeabi-v7a
+android.archs = arm64-v8a
 
 # (bool) Automatically accept Android SDK licenses
 android.accept_sdk_license = True
@@ -42,7 +42,7 @@ android.ndk = 25b
 [buildozer]
 
 # (int) Log level (0 = error only, 1 = info, 2 = debug)
-log_level = 2
+log_level = 1
 
 # (int) Display warning if buildozer is run as root
-warn_on_root = 1
+warn_on_root = 0
