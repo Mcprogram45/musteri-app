@@ -2,7 +2,7 @@ name: Musteri Takip APK Derleme
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -17,36 +17,35 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Sistem Bağımlılıklarını ve Java 17 Kur
+      - name: Java 17 Ayarla
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Sistem Bağımlılıklarını Kur
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            git zip unzip openjdk-17-jdk \
-            autoconf libtool pkg-config zlib1g-dev \
-            libncurses5-dev libncursesw5-dev libtinfo5 \
-            cmake libffi-dev libssl-dev automake \
-            ccache
+            git zip unzip patch lld autoconf libtool pkg-config \
+            zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 \
+            cmake libffi-dev libssl-dev automake ccache
 
-      - name: Buildozer ve Cython Kur
+      - name: Buildozer ve Uyumlu Pip/Cython Kur
         run: |
-          pip install --upgrade pip setuptools wheel
-          pip install cython==0.29.36 buildozer
-
-      - name: Buildozer Önbelleğini Kullan (Hızlandırma)
-        uses: actions/cache@v4
-        with:
-          path: .buildozer
-          key: buildozer-${{ runner.os }}-${{ hashFiles('buildozer.spec') }}
+          python -m pip install --upgrade "pip<25.0" setuptools wheel "virtualenv<20.27"
+          pip install "cython<3.0" https://github.com
 
       - name: APK Derle
+        env:
+          VIRTUALENV_PYTHON: /opt/hostedtoolcache/Python/3.10.22/x64/bin/python
+          VIRTUALENV_PIP: "24.3.1"
         run: |
-          buildozer android debug > build.log 2>&1 || {
+          yes | buildozer android debug > build.log 2>&1 || {
             echo "=== DERLEME HATASI DETAYI ==="
-            grep -B 15 -A 5 "Command failed:" build.log || tail -n 60 build.log
+            grep -B 20 -A 2 "Command failed:" build.log || tail -n 50 build.log
             exit 1
           }
-
-
 
       - name: APK Dosyasını Yükle
         uses: actions/upload-artifact@v4
