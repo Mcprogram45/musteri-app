@@ -40,10 +40,11 @@ jobs:
 
       - name: APK Derle
         run: |
-          yes | buildozer android debug
+         yes | buildozer android debug > build.log 2>&1 || (tail -n 100 build.log && exit 1)
+
 
       - name: APK Dosyasını Yükle
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-ar tifact@v4
         with:
           name: musteri-takip-apk
           path: bin/*.apk
